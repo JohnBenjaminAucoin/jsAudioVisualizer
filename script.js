@@ -20,6 +20,9 @@ const drawVisualizer = ({
             case 3 :
                 preset3(args)
                 break;
+            case 4 :
+                preset4(args)
+                break;
             default:
                 preset1(args)
             
@@ -58,7 +61,7 @@ function preset1({
             const red =  i/size * 256 ;
             const green =  256;
             const blue =  (1 - i/size) * 256;
-            ctx.strokeStyle = `rgb(${red}, ${green}, ${blue})`;
+            ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
             ctx.fillRect(x, canvas.height -barHeight, barWidth, 20); // this will continue moving from left to right
             x += barWidth; // increases the x value by the width of the bar
         }
@@ -79,10 +82,36 @@ function preset3({
             const red =  i/size * 256 ;
             const green =  256;
             const blue =  (1 - i/size) * 256;
-            ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+            ctx.strokeStyle = `rgb(${red}, ${green}, ${blue})`;
             ctx.beginPath();
-            ctx.arc(barHeight, barHeight, barHeight, 0, 2 * Math.PI);
+            ctx.arc(canvas.width/2, canvas.height-barHeight, barHeight, 0, 2 * Math.PI);
             ctx.stroke();
+        }
+
+}
+
+function preset4({
+    bufferLength,
+    dataArray,
+    barWidth,
+    amplitude,
+    size
+}){
+    let barHeight;
+
+        for (let i = 0; i < bufferLength; i++) {
+            barHeight = dataArray[i]*3.5;
+            const red = barHeight/canvas.height * 256 ;
+            const green = barHeight/canvas.height * 128;
+            const blue = (1- barHeight/canvas.height) *  256;
+            ctx.strokeStyle = `rgb(${red}, ${green}, ${blue})`;
+            ctx.beginPath();
+            ctx.moveTo(canvas.width/2,canvas.height -barHeight);
+            ctx.lineTo(0 + barHeight,canvas.height);
+            ctx.lineTo(canvas.width - barHeight, canvas.height);
+            ctx.lineTo(canvas.width/2,canvas.height -barHeight);
+
+            ctx.stroke()
         }
 
 }
@@ -90,7 +119,7 @@ function preset3({
 
 
 let audio1 = new Audio();
-audio1.src = "./Porter_Robinson_Shelter.mp3";
+audio1.src = "./08-13-2023 a.k.a Lost Worlds mastered.wav";
 
 
 const container = document.getElementById("container");
@@ -114,7 +143,7 @@ analyser.connect(audioCtx.destination);
 analyser.fftSize = 512;
 const size = analyser.fftSize;
 
-let presetN = 1;
+let presetN = 4;
 
 
 const bufferLength = analyser.frequencyBinCount;
