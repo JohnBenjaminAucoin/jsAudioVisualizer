@@ -18,9 +18,18 @@
             <div id="played-bar" class="progress" role="progressbar" aria-label="Segment one" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100" style="width: 15%">
                 <div class="progress-bar bg-secondary"></div>
             </div>
-            <div id="buffered-bar" class="progress" role="progressbar" aria-label="Segment one" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" style="width: 30%">
-              <div class="progress-bar bg-body-secondary"></div>
-          </div>
+            
+        </div>
+
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Visual
+          </button>
+          <ul class="dropdown-menu">
+            <li><button class="dropdown-item" type="button" onclick="choosePreset(1)">1</button></li>
+            <li><button class="dropdown-item" type="button" onclick="choosePreset(2)">2</button></li>
+            <li><button class="dropdown-item" type="button" onclick="choosePreset(3)">3</button></li>
+          </ul>
         </div>
     </div>
 
