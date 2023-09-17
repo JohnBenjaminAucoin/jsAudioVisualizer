@@ -1,3 +1,24 @@
+const drawVisualizer = ({
+    bufferLength,
+    dataArray,
+    barWidth,
+    amplitude,
+    size
+}) => {
+    let barHeight;
+
+    for (let i = 0; i < bufferLength; i++) {
+        barHeight = dataArray[i] * amplitude;
+        const red =  i/size * 256 ;
+        const green = 256;
+        const blue = (1 - i/size) * 256;
+        ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight); // this will continue moving from left to right
+        x += barWidth; // increases the x value by the width of the bar
+    }
+};
+
+
 let audio1 = new Audio();
 audio1.src = "./Porter_Robinson_Shelter.mp3";
 
@@ -20,7 +41,10 @@ analyser = audioCtx.createAnalyser();
 audioSource.connect(analyser);
 analyser.connect(audioCtx.destination);
 
-analyser.fftSize = 128;
+analyser.fftSize = 8192;
+const size = analyser.fftSize;
+const amplitude = 3.5;
+
 const bufferLength = analyser.frequencyBinCount;
 const dataArray = new Uint8Array(bufferLength);
 const barWidth = canvas.width / bufferLength;
@@ -30,17 +54,21 @@ function animate() {
     x = 0;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     analyser.getByteFrequencyData(dataArray);
-    for (let i = 0; i < bufferLength; i++) {
-        barHeight = dataArray[i];
-        ctx.fillStyle = "white";
-        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-        x += barWidth;
-    }
+    drawVisualizer({
+        bufferLength,
+        dataArray,
+        barWidth,
+        amplitude,
+        size
+    });
 
     requestAnimationFrame(animate);
 }
 
 animate();
+
+
+
 
 function playbutton(){
 
