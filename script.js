@@ -15,10 +15,14 @@ const drawVisualizer = ({
         switch(presetN){
             case 1 :
                 preset1(args)
+                break;
             case 2 :
                 preset2(args)
+                break;
             case 3 :
                 preset3(args)
+                
+            
         }
         
 };
