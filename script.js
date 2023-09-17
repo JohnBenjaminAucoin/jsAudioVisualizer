@@ -42,5 +42,10 @@ function animate() {
 
 animate();
 
+function playbutton(){
 
+    audioCtx.resume()
+    audio1.play()
+
+    }
 
