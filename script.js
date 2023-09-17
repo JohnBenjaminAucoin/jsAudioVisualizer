@@ -62,6 +62,8 @@ function animate() {
         size
     });
 
+    console.log(audio1.duration)
+
     requestAnimationFrame(animate);
 }
 
