@@ -2,14 +2,12 @@ const drawVisualizer = ({
     bufferLength,
     dataArray,
     barWidth,
-    amplitude,
     size,
     presetN
 }) => {
     let args = {bufferLength,
         dataArray,
         barWidth,
-        amplitude,
         size}
         
         switch(presetN){
@@ -21,7 +19,9 @@ const drawVisualizer = ({
                 break;
             case 3 :
                 preset3(args)
-                
+                break;
+            default:
+                preset1(args)
             
         }
         
@@ -31,13 +31,12 @@ function preset1({
     bufferLength,
     dataArray,
     barWidth,
-    amplitude,
     size
 }){
     let barHeight;
 
         for (let i = 0; i < bufferLength; i++) {
-            barHeight = dataArray[i] * amplitude;
+            barHeight = dataArray[i] * 3;
             const red =  (1 - i/size)  * 256 ;
             const green =i/size *  256;
             const blue =  256;
@@ -50,13 +49,12 @@ function preset1({
     bufferLength,
     dataArray,
     barWidth,
-    amplitude,
     size
 }){
     let barHeight;
 
         for (let i = 0; i < bufferLength; i++) {
-            barHeight = dataArray[i] * amplitude;
+            barHeight = dataArray[i] *2;
             const red =  i/size * 256 ;
             const green =  256;
             const blue =  (1 - i/size) * 256;
@@ -77,13 +75,13 @@ function preset3({
     let barHeight;
 
         for (let i = 0; i < bufferLength; i++) {
-            barHeight = dataArray[i];
+            barHeight = dataArray[i]*2;
             const red =  i/size * 256 ;
             const green =  256;
             const blue =  (1 - i/size) * 256;
             ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
             ctx.beginPath();
-            ctx.arc(canvas.width/2, canvas.height/2, barHeight, 0, 2 * Math.PI);
+            ctx.arc(barHeight, barHeight, barHeight, 0, 2 * Math.PI);
             ctx.stroke();
         }
 
@@ -113,9 +111,9 @@ analyser = audioCtx.createAnalyser();
 audioSource.connect(analyser);
 analyser.connect(audioCtx.destination);
 
-analyser.fftSize = 256;
+analyser.fftSize = 512;
 const size = analyser.fftSize;
-const amplitude = 3.5;
+
 let presetN = 1;
 
 
@@ -135,7 +133,6 @@ function animate() {
         bufferLength,
         dataArray,
         barWidth,
-        amplitude,
         size,
         presetN
     });
