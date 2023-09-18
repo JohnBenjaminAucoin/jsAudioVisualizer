@@ -122,6 +122,13 @@ let audio1 = new Audio();
 audio1.src = "./08-13-2023 a.k.a Lost Worlds mastered.wav";
 
 
+async function micButton(){
+    let userMicStream = await navigator.mediaDevices.getUserMedia({
+        audio: true
+      })
+    audio1.src = userMicStream;
+
+}
 const container = document.getElementById("container");
 const canvas = document.getElementById("canvas");
 canvas.width = window.innerWidth;
