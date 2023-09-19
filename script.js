@@ -23,6 +23,9 @@ const drawVisualizer = ({
             case 4 :
                 preset4(args)
                 break;
+            case 5 :
+                preset5(args)
+                break;
             default:
                 preset1(args)
             
@@ -74,7 +77,7 @@ function preset1({
     size
 }){
     let frequencylevel;
-
+    
         for (let i = 0; i < bufferLength; i++) {
             frequencylevel = dataArray[i] *2;
             const red =  i/size * 256 ;
@@ -133,6 +136,47 @@ function preset4({
             ctx.stroke()
         }
 
+}
+
+function preset5({
+    bufferLength,
+    dataArray,
+    barWidth,
+    amplitude,
+    size
+}){
+    let frequencylevel;
+    let oscillator = (Math.sin(audio1.currentTime/40))/1;
+    let oscillatorinv = (-Math.sin(audio1.currentTime/40))/1;
+    let rotation = oscillator * 180;
+    
+        for (let i = 0; i < bufferLength; i++) {
+            ctx.translate(canvas.width/2,canvas.height/2);
+            ctx.rotate(rotation * Math.PI / 180);
+            ctx.translate(-canvas.width/2,-canvas.height/2);
+
+            frequencylevel = dataArray[i]*3.5;
+            const red =  (oscillator+ frequencylevel/canvas.height) * 256 ;
+            const green = frequencylevel/canvas.height*256;
+            const blue = (oscillatorinv+ frequencylevel/canvas.height) *  256;
+            ctx.strokeStyle = `rgb(${red}, ${green}, ${blue})`;
+            ctx.beginPath();
+            ctx.moveTo(canvas.width/2,canvas.height/2 +frequencylevel/2);
+
+            ctx.lineTo(canvas.width/2 -4* frequencylevel/6,canvas.height/2 -frequencylevel/2);
+            ctx.lineTo(canvas.width/2 +4* frequencylevel/6,canvas.height/2 -frequencylevel/2);
+
+            ctx.lineTo(canvas.width/2,canvas.height/2 +frequencylevel/2);
+            
+            
+            ctx.stroke()
+
+        }
+        for (let j = 0; j < bufferLength; j++) {
+            ctx.translate(canvas.width/2,canvas.height/2);
+            ctx.rotate(-rotation * Math.PI / 180);
+            ctx.translate(-canvas.width/2,-canvas.height/2);
+        }
 }
 
 
@@ -252,7 +296,7 @@ async function micButton(){
 
 function createvisualizer(){
     
-    analyser.fftSize = 2048;
+    analyser.fftSize = 128;
     const size = analyser.fftSize;
 
     const bufferLength = analyser.frequencyBinCount;
