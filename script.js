@@ -29,24 +29,43 @@ const drawVisualizer = ({
         }
         
 };
-//hey
+
 function preset1({
     bufferLength,
     dataArray,
     barWidth,
     size
 }){
-    let barHeight;
+    let frequencylevel;
+    let oscillate = Math.sin(audio1.currentTime/2) + 1;
+        let oscillateinv = -1*Math.sin((audio1.currentTime+2)/2) + 1;
 
-        for (let i = 0; i < bufferLength; i++) {
-            barHeight = dataArray[i] * 3;
-            const red =  (1 - i/size)  * 256 ;
+    for (let i = bufferLength; i >= 0; i-=2) {
+        
+        frequencylevel = dataArray[i] * 3;
+        const red = oscillateinv*(1 - i/size)  * 256 ;
+        const green =i/size *  256;
+        const blue =  oscillate*128;
+        ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+        ctx.fillRect(x, canvas.height - frequencylevel, barWidth, frequencylevel); // this will continue moving from left to right
+        x += barWidth; // increases the x value by the width of the bar
+    }
+        for (let i = 0; i < bufferLength; i+=2) {
+            
+            frequencylevel = dataArray[i] * 3;
+            const red =  oscillateinv*(1 - i/size)  * 256 ;
             const green =i/size *  256;
-            const blue =  256;
+            const blue = oscillate*128;
             ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
-            ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight); // this will continue moving from left to right
+            ctx.fillRect(x, canvas.height - frequencylevel, barWidth, frequencylevel); // this will continue moving from left to right
             x += barWidth; // increases the x value by the width of the bar
         }
+
+        
+        
+
+
+
 
 }function preset2({
     bufferLength,
@@ -54,15 +73,15 @@ function preset1({
     barWidth,
     size
 }){
-    let barHeight;
+    let frequencylevel;
 
         for (let i = 0; i < bufferLength; i++) {
-            barHeight = dataArray[i] *2;
+            frequencylevel = dataArray[i] *2;
             const red =  i/size * 256 ;
             const green =  256;
             const blue =  (1 - i/size) * 256;
             ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
-            ctx.fillRect(x, canvas.height -barHeight, barWidth, 20); // this will continue moving from left to right
+            ctx.fillRect(x, canvas.height -frequencylevel, barWidth, 20); // this will continue moving from left to right
             x += barWidth; // increases the x value by the width of the bar
         }
 
@@ -75,16 +94,16 @@ function preset3({
     amplitude,
     size
 }){
-    let barHeight;
+    let frequencylevel;
 
         for (let i = 0; i < bufferLength; i++) {
-            barHeight = dataArray[i]*2;
+            frequencylevel = dataArray[i]*2;
             const red =  i/size * 256 ;
             const green =  256;
             const blue =  (1 - i/size) * 256;
             ctx.strokeStyle = `rgb(${red}, ${green}, ${blue})`;
             ctx.beginPath();
-            ctx.arc(canvas.width/2, canvas.height-barHeight, barHeight, 0, 2 * Math.PI);
+            ctx.arc(canvas.width/2, canvas.height-frequencylevel, frequencylevel, 0, 2 * Math.PI);
             ctx.stroke();
         }
 
@@ -97,19 +116,19 @@ function preset4({
     amplitude,
     size
 }){
-    let barHeight;
+    let frequencylevel;
 
         for (let i = 0; i < bufferLength; i++) {
-            barHeight = dataArray[i]*3.5;
-            const red = barHeight/canvas.height * 256 ;
-            const green = barHeight/canvas.height * 128;
-            const blue = (1- barHeight/canvas.height) *  256;
+            frequencylevel = dataArray[i]*3.5;
+            const red = frequencylevel/canvas.height * 256 ;
+            const green = frequencylevel/canvas.height * 128;
+            const blue = (1- frequencylevel/canvas.height) *  256;
             ctx.strokeStyle = `rgb(${red}, ${green}, ${blue})`;
             ctx.beginPath();
-            ctx.moveTo(canvas.width/2,canvas.height -barHeight);
-            ctx.lineTo(0 + barHeight,canvas.height);
-            ctx.lineTo(canvas.width - barHeight, canvas.height);
-            ctx.lineTo(canvas.width/2,canvas.height -barHeight);
+            ctx.moveTo(canvas.width/2,canvas.height -frequencylevel);
+            ctx.lineTo(0 + frequencylevel,canvas.height);
+            ctx.lineTo(canvas.width - frequencylevel, canvas.height);
+            ctx.lineTo(canvas.width/2,canvas.height -frequencylevel);
 
             ctx.stroke()
         }
@@ -144,7 +163,7 @@ gain.gain.value = 0;
 gain.connect(audioCtx.destination);
 
 
-let presetN = 4;
+let presetN = 1;
 
 let x = 0;
 
@@ -192,7 +211,7 @@ function playbutton(){
         playButtonE.dataset.state = 0;
     }
 
-    //audioSourceUser.disconnect();
+    
  
 
     createvisualizer();
@@ -233,7 +252,7 @@ async function micButton(){
 
 function createvisualizer(){
     
-    analyser.fftSize = 512;
+    analyser.fftSize = 2048;
     const size = analyser.fftSize;
 
     const bufferLength = analyser.frequencyBinCount;
