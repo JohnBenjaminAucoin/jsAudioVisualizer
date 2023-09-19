@@ -121,14 +121,6 @@ function preset4({
 let audio1 = new Audio();
 audio1.src = "./08-13-2023 a.k.a Lost Worlds mastered.wav";
 
-
-async function micButton(){
-    let userMicStream = await navigator.mediaDevices.getUserMedia({
-        audio: true
-      })
-    audio1.src = userMicStream;
-
-}
 const container = document.getElementById("container");
 const canvas = document.getElementById("canvas");
 canvas.width = window.innerWidth;
@@ -138,58 +130,144 @@ const ctx = canvas.getContext("2d");
 
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let audioSourceUser = null;
 let audioSource = null;
 let analyser = null;
+let gain = null;
 
-
-audioSource = audioCtx.createMediaElementSource(audio1);
 analyser = audioCtx.createAnalyser();
-audioSource.connect(analyser);
-analyser.connect(audioCtx.destination);
 
-analyser.fftSize = 512;
-const size = analyser.fftSize;
+
+gain = audioCtx.createGain();
+analyser.connect(gain);
+gain.gain.value = 0;
+gain.connect(audioCtx.destination);
+
 
 let presetN = 4;
 
-
-const bufferLength = analyser.frequencyBinCount;
-const dataArray = new Uint8Array(bufferLength);
-const barWidth = canvas.width / bufferLength;
-
-const EplayedBar = document.getElementById("played-bar")
-
 let x = 0;
-function animate() {
-    x = 0;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    analyser.getByteFrequencyData(dataArray);
+
+
+
+const playButtonE = document.getElementById("Play");
+
+
+function pausePlayback(){
+  
     
-    drawVisualizer({
-        bufferLength,
-        dataArray,
-        barWidth,
-        size,
-        presetN
-    });
-
-    EplayedBar.setAttribute("style",`width: ${audio1.currentTime/audio1.duration *100}%`)
-    
-
-
-    requestAnimationFrame(animate);
+    playButtonE.classList.remove("fa-pause")
+        playButtonE.classList.add("fa-play")
+    playButtonE.dataset.state = 1;
+    audio1.pause()
 }
-
-animate();
-
-
-
-
 function playbutton(){
-    audioCtx.resume()
-    audio1.play()
+    
+    if (playButtonE.dataset.state == "0"){
+        pausePlayback();
+
+        console.log("playButtonE.dataset.state")
+    }else if (playButtonE.dataset.state == "1") {
+        
+        if (micButtonE.dataset.state == "1"){
+            micButton();
+        }
+
+
+        audioCtx.resume()
+        audio1.play()
+        playButtonE.classList.remove("fa-play")
+    playButtonE.classList.add("fa-pause")
+
+        
+
+        try{
+        audioSource = audioCtx.createMediaElementSource(audio1);
+        }catch(DOMexception){
+        }
+        audioSource.connect(analyser);
+
+
+        gain.gain.value = 1;
+        playButtonE.dataset.state = 0;
+    }
+
+    //audioSourceUser.disconnect();
+ 
+
+    createvisualizer();
 }
+
+const micButtonE = document.getElementById("Mic");
+
+let micState = false;
+async function micButton(){
+    if (micButtonE.dataset.state == "0"){
+    
+    let userMicStream = await navigator.mediaDevices.getUserMedia({
+        audio: true
+      })
+      
+      
+      pausePlayback();
+    
+      
+
+      
+      audioCtx.resume()
+
+      audioSourceUser = audioCtx.createMediaStreamSource(userMicStream);
+      audioSourceUser.connect(analyser);
+      micButtonE.dataset.state = "1";
+
+    }else{
+        micButtonE.dataset.state = "0";
+        audioSourceUser.disconnect();
+
+    }
+    micButtonE.classList.toggle("fa-microphone-slash")
+      micButtonE.classList.toggle("fa-microphone")
+      createvisualizer();
+
+}
+
+function createvisualizer(){
+    
+    analyser.fftSize = 512;
+    const size = analyser.fftSize;
+
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    const barWidth = canvas.width / bufferLength;
+
+    const EplayedBar = document.getElementById("played-bar")
+
+
+    function animate() {
+        x = 0;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        analyser.getByteFrequencyData(dataArray);
+        
+        drawVisualizer({
+            bufferLength,
+            dataArray,
+            barWidth,
+            size,
+            presetN
+        });
+
+        EplayedBar.setAttribute("style",`width: ${audio1.currentTime/audio1.duration *100}%`)
+        
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+}
+
 
 function choosePreset(number){
     presetN = number;
 }
+
+
+
