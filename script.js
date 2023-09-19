@@ -296,7 +296,7 @@ async function micButton(){
 
 function createvisualizer(){
     
-    analyser.fftSize = 128;
+    analyser.fftSize = 512;
     const size = analyser.fftSize;
 
     const bufferLength = analyser.frequencyBinCount;
