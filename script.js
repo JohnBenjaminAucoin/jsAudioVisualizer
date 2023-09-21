@@ -146,27 +146,35 @@ function preset5({
     size
 }){
     let frequencylevel;
-    let oscillator = (Math.sin(audio1.currentTime/40))/1;
-    let oscillatorinv = (-Math.sin(audio1.currentTime/40))/1;
+    let oscillator = (Math.sin(audio1.currentTime/40));
+    let oscillatorinv = (-Math.sin(audio1.currentTime/40));
     let rotation = oscillator * 180;
+    let offset = 0;
     
+    let rgbLOW = [18,0,10]
         for (let i = 0; i < bufferLength; i++) {
             ctx.translate(canvas.width/2,canvas.height/2);
             ctx.rotate(rotation * Math.PI / 180);
             ctx.translate(-canvas.width/2,-canvas.height/2);
 
+            
+
             frequencylevel = dataArray[i]*3.5;
-            const red =  (oscillator+ frequencylevel/canvas.height) * 256 ;
-            const green = frequencylevel/canvas.height*256;
-            const blue = (oscillatorinv+ frequencylevel/canvas.height) *  256;
+            const red = rgbLOW[0] + (oscillator+ frequencylevel/canvas.height) * (256 - rgbLOW[0]) ;
+            const green = rgbLOW[1] + frequencylevel/canvas.height*(256 - rgbLOW[1]);
+            const blue = rgbLOW[2] + (oscillatorinv+ frequencylevel/canvas.height) * (256 - rgbLOW[2]);
             ctx.strokeStyle = `rgb(${red}, ${green}, ${blue})`;
+
+            
+
+
             ctx.beginPath();
-            ctx.moveTo(canvas.width/2,canvas.height/2 +frequencylevel/2);
+            ctx.moveTo(canvas.width/2,canvas.height/2 +frequencylevel/2 +offset);
 
-            ctx.lineTo(canvas.width/2 -4* frequencylevel/6,canvas.height/2 -frequencylevel/2);
-            ctx.lineTo(canvas.width/2 +4* frequencylevel/6,canvas.height/2 -frequencylevel/2);
+            ctx.lineTo((canvas.width/2 - (4* frequencylevel/6))-offset,(canvas.height/2 -frequencylevel/2))-offset;
+            ctx.lineTo((canvas.width/2 + (4* frequencylevel/6))+offset,(canvas.height/2 -frequencylevel/2))-offset;
 
-            ctx.lineTo(canvas.width/2,canvas.height/2 +frequencylevel/2);
+            ctx.lineTo(canvas.width/2,canvas.height/2 +frequencylevel/2 + offset);
             
             
             ctx.stroke()
