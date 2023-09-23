@@ -26,6 +26,9 @@ const drawVisualizer = ({
             case 5 :
                 preset5(args)
                 break;
+            case 6 :
+                preset6(args)
+                break;
             default:
                 preset1(args)
             
@@ -178,6 +181,48 @@ function preset5({
             
             
             ctx.stroke()
+
+        }
+        for (let j = 0; j < bufferLength; j++) {
+            ctx.translate(canvas.width/2,canvas.height/2);
+            ctx.rotate(-rotation * Math.PI / 180);
+            ctx.translate(-canvas.width/2,-canvas.height/2);
+        }
+}
+
+function preset6({
+    bufferLength,
+    dataArray,
+    barWidth,
+    amplitude,
+    size
+}){
+    let frequencylevel;
+    let oscillator = (Math.sin(audio1.currentTime/40));
+    let oscillatorinv = (-Math.sin(audio1.currentTime/40));
+    let rotation = oscillator * 180;
+    let offset = 0;
+    
+    let rgbLOW = [18,0,10]
+        for (let i = 0; i < bufferLength; i++) {
+            ctx.translate(canvas.width/2,canvas.height/2);
+            ctx.rotate(rotation * Math.PI / 180);
+            ctx.translate(-canvas.width/2,-canvas.height/2);
+
+            
+
+            frequencylevel = dataArray[i]*3.5;
+            const red = rgbLOW[0] + (oscillator+ (1-frequencylevel/canvas.height)) * (256 - rgbLOW[0]) ;
+            const green = rgbLOW[1] + frequencylevel/canvas.height*(256 - rgbLOW[1]);
+            const blue = rgbLOW[2] + (oscillatorinv+ (1 - frequencylevel/canvas.height)) * (256 - rgbLOW[2]);
+            ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+
+            
+            let rectSize = 1000 *frequencylevel/canvas.height;
+
+            ctx.beginPath();
+            ctx.fillRect(canvas.width/2 - rectSize/2, canvas.height/2 - rectSize/2,rectSize, rectSize);
+            ctx.stroke();
 
         }
         for (let j = 0; j < bufferLength; j++) {
