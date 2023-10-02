@@ -29,6 +29,12 @@ const drawVisualizer = ({
             case 6 :
                 preset6(args)
                 break;
+            case 7 :
+                preset7(args)
+                break;
+            case 8 :
+                preset8(args)
+                break;
             default:
                 preset1(args)
             
@@ -43,15 +49,15 @@ function preset1({
     size
 }){
     let frequencylevel;
-    let oscillate = Math.sin(audio1.currentTime/2) + 1;
-        let oscillateinv = -1*Math.sin((audio1.currentTime+2)/2) + 1;
+    let oscillator = Math.sin(audio1.currentTime/2) + 1;
+        let oscillatorinv = -1*Math.sin((audio1.currentTime+2)/2) + 1;
 
     for (let i = bufferLength; i >= 0; i-=2) {
         
         frequencylevel = dataArray[i] * 3;
-        const red = oscillateinv*(1 - i/size)  * 256 ;
+        const red = oscillatorinv*(1 - i/size)  * 256 ;
         const green =i/size *  256;
-        const blue =  oscillate*128;
+        const blue =  oscillator*128;
         ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
         ctx.fillRect(x, canvas.height - frequencylevel, barWidth, frequencylevel); // this will continue moving from left to right
         x += barWidth; // increases the x value by the width of the bar
@@ -59,18 +65,13 @@ function preset1({
         for (let i = 0; i < bufferLength; i+=2) {
             
             frequencylevel = dataArray[i] * 3;
-            const red =  oscillateinv*(1 - i/size)  * 256 ;
+            const red =  oscillatorinv*(1 - i/size)  * 256 ;
             const green =i/size *  256;
-            const blue = oscillate*128;
+            const blue = oscillator*128;
             ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
             ctx.fillRect(x, canvas.height - frequencylevel, barWidth, frequencylevel); // this will continue moving from left to right
             x += barWidth; // increases the x value by the width of the bar
         }
-
-        
-        
-
-
 
 
 }function preset2({
@@ -231,6 +232,133 @@ function preset6({
             ctx.translate(-canvas.width/2,-canvas.height/2);
         }
 }
+
+function preset7({
+    bufferLength,
+    dataArray,
+    barWidth,
+    amplitude,
+    size
+}){
+    let frequencylevel;
+    let oscillator = (Math.sin(audio1.currentTime/40));
+    let oscillatorinv = (-Math.sin(audio1.currentTime/40));
+    let rotation = oscillator * 180;
+    let offset = 0;
+        let negativity = 1;
+    
+    for (let i = bufferLength; i >= 0; i-=2) {
+        negativity *= -1;
+
+
+        frequencylevel = dataArray[i] * 3;
+        const red = oscillatorinv*(1 - i/size)  * 256 ;
+        const green =i/size *  256;
+        const blue =  oscillator*128;
+
+        ctx.strokeStyle = `rgb(${red}, ${green}, ${blue})`;
+        ctx.beginPath();
+        ctx.moveTo(x,canvas.height/2);
+        x += barWidth;
+
+
+        ctx.quadraticCurveTo(x - barWidth/2 -i,canvas.height/2 + negativity * frequencylevel, x,canvas.height/2);
+        ctx.stroke();
+    }
+        for (let i = 0; i < bufferLength; i+=2) {
+            
+            negativity *= -1;
+
+
+        frequencylevel = dataArray[i] * 3;
+        const red = oscillatorinv*(1 - i/size)  * 256 ;
+        const green =i/size *  256;
+        const blue =  oscillator*128;
+
+        ctx.strokeStyle = `rgb(${red}, ${green}, ${blue})`;
+        ctx.beginPath();
+        ctx.moveTo(x,canvas.height/2);
+        x += barWidth;
+
+
+        ctx.quadraticCurveTo(x- barWidth/2 +i,canvas.height/2 + negativity * frequencylevel, x,canvas.height/2);
+        ctx.stroke();
+        }
+
+
+    }
+
+
+    function preset8({
+        bufferLength,
+        dataArray,
+        barWidth,
+        amplitude,
+        size
+    }){
+        let frequencylevel;
+        let oscillator = (Math.sin(audio1.currentTime/40));
+        let oscillatorinv = (-Math.sin(audio1.currentTime/40));
+        let rotation = oscillator * 180;
+        let offset = 0;
+        let negativity = -1;
+        
+        let circumference = canvas.width;
+        let radius = circumference / Math.PI;
+        ctx.beginPath();
+        let rgbLOW = [18,0,10]
+        for (let startingpoint = 0.5; startingpoint < 2.5; startingpoint += 0.25){
+
+        for (let i = bufferLength; i >= 0; i-=2) {
+            
+            
+    
+            frequencylevel = dataArray[i] * 3;
+            const red = rgbLOW[0] + (oscillator+ (1-frequencylevel/canvas.height)) * (256 - rgbLOW[0]) ;
+            const green = rgbLOW[1] + frequencylevel/canvas.height*(256 - rgbLOW[1]);
+            const blue = rgbLOW[2] + (oscillatorinv+ (1 - frequencylevel/canvas.height)) * (256 - rgbLOW[2]);
+    
+            ctx.strokeStyle = `rgb(${red}, ${green}, ${blue})`;
+            ctx.beginPath();
+            ctx.arc(canvas.width/2,canvas.height/2 , radius , (startingpoint + x/circumference) *Math.PI, (startingpoint + x/circumference + barWidth*2/circumference) *Math.PI );
+            ctx.arc(canvas.width/2,canvas.height/2 , radius + frequencylevel/canvas.height *radius * negativity, (startingpoint + x/circumference) *Math.PI, (startingpoint + x/circumference + barWidth*2/circumference) *Math.PI );
+
+            
+            x += barWidth*2;
+    
+            ctx.stroke();
+            
+            
+        }
+            for (let i = 0; i < bufferLength; i+=2) {
+                
+                    
+    
+            frequencylevel = dataArray[i] * 3;
+            const red = rgbLOW[0] + (oscillator+ (1-frequencylevel/canvas.height)) * (256 - rgbLOW[0]) ;
+            const green = rgbLOW[1] + frequencylevel/canvas.height*(256 - rgbLOW[1]);
+            const blue = rgbLOW[2] + (oscillatorinv+ (1 - frequencylevel/canvas.height)) * (256 - rgbLOW[2]);
+                
+            ctx.strokeStyle = `rgb(${red}, ${green}, ${blue})`;
+            ctx.beginPath();
+
+            ctx.arc(canvas.width/2,canvas.height/2 , radius , (startingpoint + x/circumference) *Math.PI, (startingpoint+ x/circumference + barWidth*2/circumference) *Math.PI );
+
+
+            ctx.arc(canvas.width/2,canvas.height/2 , radius + frequencylevel/canvas.height *radius * negativity, (startingpoint + x/circumference) *Math.PI, (startingpoint + x/circumference + barWidth*2/circumference) *Math.PI );
+
+            x += barWidth*2;
+    
+            ctx.stroke();
+            
+            }
+
+        }
+            
+            
+            
+    
+        }
 
 
 
