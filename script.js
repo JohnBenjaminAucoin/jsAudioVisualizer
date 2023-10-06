@@ -42,6 +42,7 @@ const drawVisualizer = ({
         
 };
 
+//Good Ol' Visualizer
 function preset1({
     bufferLength,
     dataArray,
@@ -74,6 +75,7 @@ function preset1({
         }
 
 
+//Sliders
 }function preset2({
     bufferLength,
     dataArray,
@@ -94,6 +96,7 @@ function preset1({
 
 }
 
+//Tunnel
 function preset3({
     bufferLength,
     dataArray,
@@ -116,6 +119,7 @@ function preset3({
 
 }
 
+//Wireframe Pyramid
 function preset4({
     bufferLength,
     dataArray,
@@ -142,6 +146,7 @@ function preset4({
 
 }
 
+//Fractal Nest
 function preset5({
     bufferLength,
     dataArray,
@@ -191,6 +196,7 @@ function preset5({
         }
 }
 
+// Mandela
 function preset6({
     bufferLength,
     dataArray,
@@ -232,7 +238,7 @@ function preset6({
             ctx.translate(-canvas.width/2,-canvas.height/2);
         }
 }
-
+//Fishbones
 function preset7({
     bufferLength,
     dataArray,
@@ -288,7 +294,7 @@ function preset7({
 
     }
 
-
+//Circle
     function preset8({
         bufferLength,
         dataArray,
